@@ -1,0 +1,1 @@
+LtiProvider::Config = OpenStruct.new
