@@ -15,7 +15,7 @@ describe LtiProvider::Launch do
 
   describe ".initialize_from_request" do
     let(:provider) do
-      p = mock('provider')
+      p = double('provider')
       p.stub(
         to_params: {
           'custom_canvas_course_id' => 1,
@@ -33,7 +33,7 @@ describe LtiProvider::Launch do
     end
 
     let(:request) do
-      r = mock('request')
+      r = double('request')
       r.stub(env: {'HTTP_REFERER' => "http://canvas.instructure.com"})
       r
     end

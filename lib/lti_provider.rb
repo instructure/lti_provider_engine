@@ -1,9 +1,6 @@
 require 'ostruct'
 
-require 'redis'
-require 'httparty'
 require 'ims'
-require 'nokogiri'
 
 require "lti_provider/config"
 require "lti_provider/lti_application"
