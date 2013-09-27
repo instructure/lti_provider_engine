@@ -4,7 +4,7 @@ describe LtiProvider::LtiController do
   let(:user_id) { "1" }
   let(:parameters) {
     {
-      'launch_url' => "http://#{request.host}/lti_provider",
+      'launch_url' => "http://#{request.host}",
       'custom_canvas_user_id' => user_id,
       'launch_presentation_return_url' => "http://test.canvas",
 
