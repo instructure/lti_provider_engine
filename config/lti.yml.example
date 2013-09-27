@@ -1,0 +1,13 @@
+default: &default
+  key: 12345
+  secret: secret
+  require_canvas: true
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
