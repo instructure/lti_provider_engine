@@ -8,7 +8,7 @@ parameters in your rails app.
 Add the gem to your `Gemfile` with the following line, and then `bundle install`
 
 ```
-gem lti_provider
+gem 'lti_provider_engine', :require => 'lti_provider'
 ```
 
 Then, mount the engine to your app by adding this line to your `routes.rb` file

@@ -5,13 +5,15 @@ require "lti_provider/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "lti_provider"
+  s.name        = "lti_provider_engine"
   s.version     = LtiProvider::VERSION
-  s.authors     = ["Dave Donahue", "Adam Anderson"]
-  s.email       = ["adam.anderson@12spokes.com"]
+  s.authors     = ["Dave Donahue", "Adam Anderson", "Simon Williams"]
+  s.email       = ["adam.anderson@12spokes.com", "simon@instructure.com"]
   s.homepage    = ""
-  s.summary     = ""
-  s.description = ""
+  s.summary     = <<-SUM
+LTIProvider is a mountable engine for handling the LTI launch and exposing LTI
+parameters in your rails app.
+SUM
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["spec/**/*"]
