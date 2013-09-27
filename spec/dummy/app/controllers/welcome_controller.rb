@@ -1,5 +1,5 @@
 class WelcomeController < ApplicationController
   def index
-    render nothing: true
+    render text: "Hello LTI"
   end
 end
