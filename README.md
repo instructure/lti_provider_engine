@@ -51,6 +51,8 @@ the tool consumer side.
 Finally, run migrations:
 
 ```
+bundle install
+bundle exec rake railties:install:migrations
 bundle exec rake db:migrate
 ```
 
