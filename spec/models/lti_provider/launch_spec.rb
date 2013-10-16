@@ -23,7 +23,7 @@ describe LtiProvider::Launch do
           'oauth_nonce' => 'nonce',
           'tool_consumer_instance_guid' => "123abc",
         },
-        launch_presentation_return_url: "http://canvas.instructure.com",
+        launch_presentation_return_url: "http://example.com",
         consumer_key: "key",
         consumer_secret: "secret",
         valid_request?: true,
@@ -34,7 +34,7 @@ describe LtiProvider::Launch do
 
     let(:request) do
       r = double('request')
-      r.stub(env: {'HTTP_REFERER' => "http://canvas.instructure.com"})
+      r.stub(env: {'HTTP_REFERER' => "http://example.com"})
       r
     end
 
@@ -45,11 +45,11 @@ describe LtiProvider::Launch do
     its(:user_id) { should == 2 }
     its(:nonce) { should == 'nonce' }
     its(:account_id) { should be_nil }
-    its(:canvas_url) { should == 'http://canvas.instructure.com' }
+    its(:canvas_url) { should == 'http://example.com' }
   end
 
   describe "xml_config" do
-    let(:lti_launch_url) { "http://rollcall/launch" }
+    let(:lti_launch_url) { "http://example.com/launch" }
     let(:doc) { Nokogiri::XML(xml) }
 
     subject(:xml) { LtiProvider::Launch.xml_config(lti_launch_url) }
@@ -63,7 +63,7 @@ describe LtiProvider::Launch do
     it "includes the course_navigation option and url + text properties" do
       nav = doc.xpath('//lticm:options[@name="course_navigation"]')
       nav.xpath('lticm:property[@name="url"]').text.should == lti_launch_url
-      nav.xpath('lticm:property[@name="text"]').text.should == LtiProvider::Config.tool_name
+      nav.xpath('lticm:property[@name="text"]').text.should == "Dummy"
       nav.xpath('lticm:property[@name="visibility"]').text.should == "admins"
     end
 
