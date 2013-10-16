@@ -1,0 +1,22 @@
+default: &default
+  tool_title: 'Dummy App'
+  tool_description: 'A very handy dummy application for testing LtiProvider engine integration.'
+  tool_id: 'dummy'
+
+  # default: 'public'
+  privacy_level: 'public' 
+
+  # url defaults to lti_launch_url, but can be overridden in each of these
+  course_navigation:
+    text: 'Dummy'
+    visibility: 'admins'
+  # account_navigation and user_navigation are also available with similar options
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

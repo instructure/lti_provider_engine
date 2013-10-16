@@ -21,28 +21,37 @@ module LtiProvider
     end
 
     def self.xml_config(lti_launch_url)
-      account_navigation = {
-        url: lti_launch_url,
-        text: LtiProvider::Config.tool_name,
-        visibility: "admins"
-      }
-      course_navigation = {
-        url: lti_launch_url,
-        text: LtiProvider::Config.tool_name,
-        visibility: "admins"
-      }
-      user_navigation = nil
+      tc = IMS::LTI::ToolConfig.new({
+        launch_url: lti_launch_url,
+        title: LtiProvider::XmlConfig.tool_title,
+        description: LtiProvider::XmlConfig.tool_description
+      })
 
-      tc = IMS::LTI::ToolConfig.new(launch_url: lti_launch_url,
-                                    title: LtiProvider::Config.tool_title,
-                                    description: LtiProvider::Config.tool_description)
+      tc.extend IMS::LTI::Extensions::Canvas::ToolConfig
+      platform = IMS::LTI::Extensions::Canvas::ToolConfig::PLATFORM
 
-      tc.set_ext_params LtiProvider::Config.source_domain,
-        privacy_level: LtiProvider::Config.privacy_level,
-        tool_id: LtiProvider::Config.tool_id
-      tc.set_ext_param LtiProvider::Config.source_domain, :course_navigation, course_navigation if course_navigation
-      tc.set_ext_param LtiProvider::Config.source_domain, :account_navigation, account_navigation if account_navigation
-      tc.set_ext_param LtiProvider::Config.source_domain, :user_navigation, user_navigation if user_navigation
+      privacy_level = LtiProvider::XmlConfig.privacy_level || "public"
+      tc.send("canvas_privacy_#{privacy_level}!")
+
+      if LtiProvider::XmlConfig.tool_id
+        tc.set_ext_param(platform, :tool_id, LtiProvider::XmlConfig.tool_id)
+      end
+
+      if LtiProvider::XmlConfig.course_navigation
+        tc.canvas_course_navigation!(LtiProvider::XmlConfig.course_navigation.symbolize_keys)
+      end
+
+      if LtiProvider::XmlConfig.account_navigation
+        tc.canvas_account_navigation!(LtiProvider::XmlConfig.account_navigation.symbolize_keys)
+      end
+
+      if LtiProvider::XmlConfig.user_navigation
+        tc.canvas_user_navigation!(LtiProvider::XmlConfig.user_navigation.symbolize_keys)
+      end
+
+      if LtiProvider::XmlConfig.environments
+        tc.set_ext_param(platform, :environments, LtiProvider::XmlConfig.environments.symbolize_keys)
+      end
 
       tc.to_xml(:indent => 2)
     end

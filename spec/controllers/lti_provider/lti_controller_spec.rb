@@ -57,7 +57,7 @@ describe LtiProvider::LtiController do
   describe "POST launch" do
     context "with a valid key" do
       before do
-        post_lti_request!(LtiProvider::LTIConfig.key, LtiProvider::LTIConfig.secret)
+        post_lti_request!(LtiProvider::Config.key, LtiProvider::Config.secret)
       end
 
       it "performs a cookie test and passes along the nonce" do
@@ -78,7 +78,7 @@ describe LtiProvider::LtiController do
 
     context "with an invalid secret" do
       it "renders an error message" do
-        post_lti_request!(LtiProvider::LTIConfig.key, 'invalid')
+        post_lti_request!(LtiProvider::Config.key, 'invalid')
         response.body.should match "The OAuth signature was invalid."
       end
     end
@@ -129,6 +129,13 @@ describe LtiProvider::LtiController do
         get :consume_launch, nonce: 'invalid', use_route: :lti_provider
         response.body.should =~ /not launched successfully/
       end
+    end
+  end
+
+  describe "configure.xml" do
+    it "should succeed" do
+      get :configure, format: :xml, use_route: :lti_provider
+      response.should be_success
     end
   end
 end

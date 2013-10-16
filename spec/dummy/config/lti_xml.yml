@@ -1,0 +1,24 @@
+default: &default
+  tool_title: 'Dummy App'
+  tool_description: 'A very handy dummy application for testing LtiProvider engine integration.'
+  tool_id: 'dummy'
+  privacy_level: 'public'
+  account_navigation:
+    text: 'Dummy'
+    visibility: 'admins'
+  course_navigation:
+    text: 'Dummy'
+    visibility: 'admins'
+    url: 'http://override.example.com/launch'
+  environments:
+    test_domain: 'text.example.com'
+    beta_domain: 'beta.example.com'
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+cucumber:
+  <<: *default

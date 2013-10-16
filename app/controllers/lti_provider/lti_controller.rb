@@ -5,7 +5,7 @@ module LtiProvider
     skip_before_filter :require_lti_launch
 
     def launch
-      provider = IMS::LTI::ToolProvider.new(params['oauth_consumer_key'], LTIConfig.secret, params)
+      provider = IMS::LTI::ToolProvider.new(params['oauth_consumer_key'], LtiProvider::Config.secret, params)
       launch = Launch.initialize_from_request(provider, request)
 
       if !launch.valid_provider?
@@ -15,7 +15,7 @@ module LtiProvider
         session[:cookie_test] = true
         redirect_to cookie_test_path(nonce: launch.nonce)
       else
-        return show_error "Unable to launch #{LtiProvider::Config.tool_name}. Please check your External Tools configuration and try again."
+        return show_error "Unable to launch #{LtiProvider::XmlConfig.tool_name}. Please check your External Tools configuration and try again."
       end
     end
 

@@ -62,7 +62,7 @@ describe LtiProvider::Launch do
 
     it "includes the course_navigation option and url + text properties" do
       nav = doc.xpath('//lticm:options[@name="course_navigation"]')
-      nav.xpath('lticm:property[@name="url"]').text.should == lti_launch_url
+      nav.xpath('lticm:property[@name="url"]').text.should == 'http://override.example.com/launch'
       nav.xpath('lticm:property[@name="text"]').text.should == "Dummy"
       nav.xpath('lticm:property[@name="visibility"]').text.should == "admins"
     end

@@ -1,0 +1,1 @@
+LtiProvider::XmlConfig = OpenStruct.new

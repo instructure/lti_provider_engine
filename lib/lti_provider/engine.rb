@@ -9,7 +9,11 @@ module LtiProvider
     end
 
     initializer "lti_provider.lti_config" do |app|
-      LtiProvider::LTIConfig.setup!
+      LtiProvider::LtiConfig.setup!
+    end
+
+    initializer "lti_provider.lti_xml_config" do |app|
+      LtiProvider::LtiXmlConfig.setup!
     end
   end
 end

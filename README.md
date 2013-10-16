@@ -27,13 +27,16 @@ class ApplicationController < ActionController::Base
 end
 ```
 
-After that, create an `lti.yml` file in your `config/` folder that looks something
+After that, create `lti.yml` and `lti_xml.yml` files in your `config/` folder that looks something
 like this:
+
+**lti.yml**
 
 ```
 default: &default
   key: your_key
   secret: your_secret
+  require_canvas: true
 
 development:
   <<: *default
@@ -47,6 +50,33 @@ production:
 
 You'll need the values of `key` and `secret` when you configure your lti app on
 the tool consumer side.
+
+**lti_xml.yml**
+
+```
+default: &default
+  tool_title: 'Dummy App'
+  tool_description: 'A very handy dummy application for testing LtiProvider engine integration.'
+  tool_id: 'dummy'
+  privacy_level: 'public'
+  account_navigation:
+    text: 'Dummy'
+    visibility: 'admins'
+  course_navigation:
+    text: 'Dummy'
+    visibility: 'admins'
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
+```
+
+These values are used in the `/configure.xml` endpoint.
 
 Finally, run migrations:
 
