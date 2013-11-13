@@ -1,1 +1,3 @@
-LtiProvider::XmlConfig = OpenStruct.new
+module LtiProvider
+  XmlConfig = OpenStruct.new
+end

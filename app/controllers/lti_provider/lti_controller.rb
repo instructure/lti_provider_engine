@@ -15,7 +15,7 @@ module LtiProvider
         session[:cookie_test] = true
         redirect_to cookie_test_path(nonce: launch.nonce)
       else
-        return show_error "Unable to launch #{LtiProvider::XmlConfig.tool_name}. Please check your External Tools configuration and try again."
+        return show_error "Unable to launch #{LtiProvider::XmlConfig.tool_title}. Please check your External Tools configuration and try again."
       end
     end
 

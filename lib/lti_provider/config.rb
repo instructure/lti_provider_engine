@@ -1,1 +1,3 @@
-LtiProvider::Config = OpenStruct.new
+module LtiProvider
+  Config = OpenStruct.new
+end
