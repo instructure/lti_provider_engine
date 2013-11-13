@@ -9,9 +9,10 @@ Gem::Specification.new do |s|
   s.version     = LtiProvider::VERSION
   s.authors     = ["Dave Donahue", "Adam Anderson", "Simon Williams"]
   s.email       = ["adam.anderson@12spokes.com", "simon@instructure.com"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/instructure/lti_provider_engine"
+  s.license     = 'MIT'
   s.summary     = <<-SUM
-LTIProvider is a mountable engine for handling the LTI launch and exposing LTI
+LtiProvider is a mountable engine for handling the LTI launch and exposing LTI
 parameters in your rails app.
 SUM
 

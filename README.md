@@ -1,6 +1,6 @@
-# LTIProvider
+# LtiProvider
 
-LTIProvider is a mountable engine for handling the LTI launch and exposing LTI
+LtiProvider is a mountable engine for handling the LTI launch and exposing LTI
 parameters in your rails app.
 
 ## Installation
