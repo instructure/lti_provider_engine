@@ -1,7 +1,7 @@
 require 'oauth/request_proxy/rack_request'
 
 module LtiProvider
-  class LtiController < ApplicationController
+  class LtiController < LtiProvider::ApplicationController
     skip_before_filter :require_lti_launch
 
     def launch
