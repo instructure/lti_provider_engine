@@ -27,7 +27,7 @@ describe LtiProvider::LtiController do
     # the oauth rack request proxy doesn't know to strip the 'action' and
     # 'controller' parameters, so we need to stub them here so the request also
     # gets signed with them
-    consumer.stubs(:to_params).returns(parameters)
+    allow(consumer).to receive(:to_params).and_return(parameters)
 
     data = consumer.generate_launch_data
     request.env['RAW_POST_DATA'] = data.to_query
@@ -41,7 +41,7 @@ describe LtiProvider::LtiController do
     context "when successful" do
       it "proceeds to oauth" do
         controller.session[:cookie_test] = true
-        controller.should_receive(:consume_launch)
+        expect(controller).to receive(:consume_launch)
         get :cookie_test, use_route: :lti_provider
       end
     end
@@ -49,7 +49,7 @@ describe LtiProvider::LtiController do
     context "when failed" do
       it "renders a message" do
         get :cookie_test, use_route: :lti_provider
-        response.should render_template('cookie_test')
+        expect(response).to render_template('cookie_test')
       end
     end
   end
@@ -61,25 +61,25 @@ describe LtiProvider::LtiController do
       end
 
       it "performs a cookie test and passes along the nonce" do
-        response.redirect_url.should include(lti_provider.cookie_test_url(nonce: '', host: request.host))
+        expect(response.redirect_url).to include(lti_provider.cookie_test_url(nonce: '', host: request.host))
       end
 
       it "saves the launch record" do
-        LtiProvider::Launch.first.user_id.should == user_id
+        expect(LtiProvider::Launch.first.user_id).to eq user_id
       end
     end
 
     context "without a key" do
       it "renders an error message" do
         post_lti_request!('', '')
-        response.body.should match "Consumer key not provided."
+        expect(response.body).to match "Consumer key not provided."
       end
     end
 
     context "with an invalid secret" do
       it "renders an error message" do
         post_lti_request!(LtiProvider::Config.key, 'invalid')
-        response.body.should match "The OAuth signature was invalid."
+        expect(response.body).to match "The OAuth signature was invalid."
       end
     end
   end
@@ -101,15 +101,15 @@ describe LtiProvider::LtiController do
     describe "a successful launch" do
       it "sets the session params" do
         get :consume_launch, nonce: 'abcd', use_route: :lti_provider
-        session[:course_id].should == 1
-        session[:user_id].should == 2
-        session[:canvas_url].should == 'http://canvas'
-        session[:tool_consumer_instance_guid].should == '123abc'
+        expect(session[:course_id]).to eq 1
+        expect(session[:user_id]).to eq 2
+        expect(session[:canvas_url]).to eq 'http://canvas'
+        expect(session[:tool_consumer_instance_guid]).to eq '123abc'
       end
 
       it "destroys the launch" do
         get :consume_launch, nonce: 'abcd', use_route: :lti_provider
-        LtiProvider::Launch.count.should == 0
+        expect(LtiProvider::Launch.count).to eq 0
       end
     end
 
@@ -120,22 +120,22 @@ describe LtiProvider::LtiController do
 
       it "shows an error" do
         get :consume_launch, nonce: 'abcd', use_route: :lti_provider
-        response.body.should =~ /not launched successfully/
+        expect(response.body).to be =~ /not launched successfully/
       end
     end
 
     describe "a failed launch" do
       it "shows an error" do
         get :consume_launch, nonce: 'invalid', use_route: :lti_provider
-        response.body.should =~ /not launched successfully/
+        expect(response.body).to be =~ /not launched successfully/
       end
     end
   end
 
   describe "configure.xml" do
-    it "should succeed" do
+    it "succeeds" do
       get :configure, format: :xml, use_route: :lti_provider
-      response.should be_success
+      expect(response).to be_success
     end
   end
 end

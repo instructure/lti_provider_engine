@@ -8,15 +8,15 @@ describe LtiProvider::Launch do
       l
     end
 
-    it { should validate_presence_of :canvas_url }
-    it { should validate_presence_of :nonce }
-    it { should validate_presence_of :provider_params }
+    it { is_expected.to validate_presence_of :canvas_url }
+    it { is_expected.to validate_presence_of :nonce }
+    it { is_expected.to validate_presence_of :provider_params }
   end
 
   describe ".initialize_from_request" do
     let(:provider) do
       p = double('provider')
-      p.stub(
+      allow(p).to receive_messages(
         to_params: {
           'custom_canvas_course_id' => 1,
           'custom_canvas_user_id' => 2,
@@ -34,18 +34,18 @@ describe LtiProvider::Launch do
 
     let(:request) do
       r = double('request')
-      r.stub(env: {'HTTP_REFERER' => "http://example.com"})
+      allow(r).to receive_messages(env: {'HTTP_REFERER' => "http://example.com"})
       r
     end
 
     subject(:launch) { LtiProvider::Launch.initialize_from_request(provider, request) }
 
-    its(:course_id) { should == 1 }
-    its(:tool_consumer_instance_guid) { should == '123abc' }
-    its(:user_id) { should == 2 }
-    its(:nonce) { should == 'nonce' }
-    its(:account_id) { should be_nil }
-    its(:canvas_url) { should == 'http://example.com' }
+    its(:course_id) { is_expected.to eq 1 }
+    its(:tool_consumer_instance_guid) { is_expected.to eq '123abc' }
+    its(:user_id) { is_expected.to eq 2 }
+    its(:nonce) { is_expected.to eq 'nonce' }
+    its(:account_id) { is_expected.to be_nil }
+    its(:canvas_url) { is_expected.to eq 'http://example.com' }
   end
 
   describe "xml_config" do
@@ -54,27 +54,27 @@ describe LtiProvider::Launch do
 
     subject(:xml) { LtiProvider::Launch.xml_config(lti_launch_url) }
 
-    it { should match(/\<\?xml/) }
+    it { is_expected.to match(/\<\?xml/) }
 
     it "includes the launch URL" do
-      doc.xpath('//blti:launch_url').text.should match lti_launch_url
+      expect(doc.xpath('//blti:launch_url').text).to match lti_launch_url
     end
 
     it "includes the course_navigation option and url + text properties" do
       nav = doc.xpath('//lticm:options[@name="course_navigation"]')
-      nav.xpath('lticm:property[@name="url"]').text.should == 'http://override.example.com/launch'
-      nav.xpath('lticm:property[@name="text"]').text.should == "Dummy"
-      nav.xpath('lticm:property[@name="visibility"]').text.should == "admins"
+      expect(nav.xpath('lticm:property[@name="url"]').text).to eq 'http://override.example.com/launch'
+      expect(nav.xpath('lticm:property[@name="text"]').text).to eq "Dummy"
+      expect(nav.xpath('lticm:property[@name="visibility"]').text).to eq "admins"
     end
 
     it "includes account_navigation" do
       nav = doc.xpath('//lticm:options[@name="account_navigation"]')
-      nav.should be_present
+      expect(nav).to be_present
     end
 
     it "includes no user_navigation" do
       nav = doc.xpath('//lticm:options[@name="user_navigation"]')
-      nav.should be_empty
+      expect(nav).to be_empty
     end
   end
 end
