@@ -94,8 +94,7 @@ describe LtiProvider::LtiController do
           'custom_canvas_user_id' => 2,
           'tool_consumer_instance_guid' => '123abc'
         }
-      },
-      without_protection: true)
+      })
     end
 
     describe "a successful launch" do
