@@ -69,12 +69,12 @@ describe LtiProvider::Launch do
 
     it "includes account_navigation" do
       nav = doc.xpath('//lticm:options[@name="account_navigation"]')
-      expect(nav).to be
+      nav.should be_present
     end
 
     it "includes no user_navigation" do
       nav = doc.xpath('//lticm:options[@name="user_navigation"]')
-      expect(nav).to be_empty
+      nav.should be_empty
     end
   end
 end
