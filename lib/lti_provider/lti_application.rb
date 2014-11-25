@@ -49,6 +49,10 @@ module LtiProvider
       current_account_id.present?
     end
 
+    def user_roles
+      session[:user_roles]
+    end
+
     def not_acceptable
       render text: "Unable to process request", status: 406
     end

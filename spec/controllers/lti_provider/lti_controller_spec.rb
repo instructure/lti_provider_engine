@@ -92,7 +92,8 @@ describe LtiProvider::LtiController do
         provider_params: {
           'custom_canvas_course_id' => 1,
           'custom_canvas_user_id' => 2,
-          'tool_consumer_instance_guid' => '123abc'
+          'tool_consumer_instance_guid' => '123abc',
+          'ext_roles' => 'student'
         }
       })
     end
@@ -104,6 +105,7 @@ describe LtiProvider::LtiController do
         expect(session[:user_id]).to eq 2
         expect(session[:canvas_url]).to eq 'http://canvas'
         expect(session[:tool_consumer_instance_guid]).to eq '123abc'
+        expect(session[:user_roles]).to eq 'student'
       end
 
       it "destroys the launch" do

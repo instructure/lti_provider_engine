@@ -62,7 +62,7 @@ module LtiProvider
       'custom_canvas_course_id'        => :course_id,
       'custom_canvas_user_id'          => :user_id,
       'lis_person_name_full'           => :user_name,
-      'roles'                          => :user_roles,
+      'ext_roles'                      => :user_roles,
       'tool_consumer_instance_guid'    => :tool_consumer_instance_guid,
       'user_image'                     => :user_avatar_url
     }.each do |provider_param, method_name|
