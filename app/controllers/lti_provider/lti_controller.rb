@@ -3,7 +3,7 @@ require 'oauth/request_proxy/rack_request'
 module LtiProvider
   class LtiController < LtiProvider::ApplicationController
     skip_before_filter :require_lti_launch
-    after_action :allow_iframe, only: [:launch, :cookie_test, :consume_launch]
+    after_filter :allow_iframe, only: [:launch, :cookie_test, :consume_launch]
 
     def launch
       app = Doorkeeper::Application.where(uid: params['oauth_consumer_key']).first if params['oauth_consumer_key'].present?
