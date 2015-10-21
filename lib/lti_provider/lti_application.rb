@@ -22,19 +22,19 @@ module LtiProvider
     end
 
     def canvas_url
-      session[:canvas_url]
+      session[:lti_canvas_url]
     end
 
     def user_id
-      session[:user_id]
+      session[:lti_user_id]
     end
 
     def current_course_id
-      session[:course_id]
+      session[:lti_course_id]
     end
 
     def tool_consumer_instance_guid
-      session[:tool_consumer_instance_guid]
+      session[:lti_tool_consumer_instance_guid]
     end
 
     def course_launch?
@@ -42,7 +42,7 @@ module LtiProvider
     end
 
     def current_account_id
-      session[:account_id]
+      session[:lti_account_id]
     end
 
     def account_launch?
@@ -50,7 +50,7 @@ module LtiProvider
     end
 
     def user_roles
-      session[:user_roles]
+      session[:lti_user_roles]
     end
 
     def not_acceptable

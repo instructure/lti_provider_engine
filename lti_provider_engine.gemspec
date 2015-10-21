@@ -21,6 +21,7 @@ SUM
 
   s.add_dependency "rails", ">= 3.2", "< 4.3"
   s.add_dependency 'ims-lti', '1.1.10'
+  s.add_dependency "doorkeeper", "~> 2.0.1"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency 'nokogiri'

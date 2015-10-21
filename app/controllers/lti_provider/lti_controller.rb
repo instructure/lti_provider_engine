@@ -3,9 +3,12 @@ require 'oauth/request_proxy/rack_request'
 module LtiProvider
   class LtiController < LtiProvider::ApplicationController
     skip_before_filter :require_lti_launch
+    after_action :allow_iframe, only: [:launch, :cookie_test, :consume_launch]
 
     def launch
-      provider = IMS::LTI::ToolProvider.new(params['oauth_consumer_key'], LtiProvider::Config.secret, params)
+      app = Doorkeeper::Application.where(uid: params['oauth_consumer_key']).first if params['oauth_consumer_key'].present?
+      provider = IMS::LTI::ToolProvider.new(app.uid, app.secret, params) if app
+      # provider ||= IMS::LTI::ToolProvider.new(params['oauth_consumer_key'], LtiProvider::Config.secret, params)
       launch = Launch.initialize_from_request(provider, request)
 
       if !launch.valid_provider?
@@ -20,6 +23,8 @@ module LtiProvider
     end
 
     def cookie_test
+      consume_launch
+      return
       if session[:cookie_test]
         # success!!! we've got a session!
         consume_launch
@@ -34,12 +39,13 @@ module LtiProvider
       if launch
         [:account_id, :course_name, :course_id, :canvas_url, :tool_consumer_instance_guid,
          :user_id, :user_name, :user_roles, :user_avatar_url].each do |attribute|
-          session[attribute] = launch.public_send(attribute)
+          session["lti_#{attribute}".to_sym] = launch.public_send(attribute)
         end
 
-        launch.destroy
+        resource_id = launch[:provider_params]['custom_opened_resource_id']
+        launch_presentation_return_url = launch[:provider_params]['launch_presentation_return_url']
 
-        redirect_to main_app.root_path
+        redirect_to "#{ENV['LTI_RUNNER_LINK'].sub(':resource_id', resource_id.to_s)}lti_nonce=#{params[:nonce]}&launch_presentation_return_url=#{CGI.escape(launch_presentation_return_url)}"
       else
         return show_error "The tool was not launched successfully. Please try again."
       end
@@ -57,5 +63,11 @@ module LtiProvider
       def show_error(message)
         render text: message
       end
+
+    private
+      def allow_iframe
+        response.headers.except! 'X-Frame-Options'
+      end
+
   end
 end
