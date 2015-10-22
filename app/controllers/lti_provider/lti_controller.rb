@@ -45,7 +45,15 @@ module LtiProvider
         resource_id = launch[:provider_params]['custom_opened_resource_id']
         launch_presentation_return_url = launch[:provider_params]['launch_presentation_return_url']
 
-        redirect_to "#{ENV['LTI_RUNNER_LINK'].sub(':resource_id', resource_id.to_s)}lti_nonce=#{params[:nonce]}&launch_presentation_return_url=#{CGI.escape(launch_presentation_return_url)}"
+        link = "#{ENV['LTI_RUNNER_LINK'].sub(':resource_id', resource_id.to_s)}"
+        if launch[:provider_params]['custom_oauth_access_token'].present?
+          link += "custom_oauth_access_token=#{launch[:provider_params]['custom_oauth_access_token']}"
+        else
+          # get/create user, authorize user and send auth data
+          # authToken=7ddadf7341cfa062d7de4f2127d452a8&userId=323304&
+        end
+        link += "lti_nonce=#{params[:nonce]}&launch_presentation_return_url=#{CGI.escape(launch_presentation_return_url)}"
+        redirect_to link
       else
         return show_error "The tool was not launched successfully. Please try again."
       end
