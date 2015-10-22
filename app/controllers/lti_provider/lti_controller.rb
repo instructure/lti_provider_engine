@@ -47,7 +47,7 @@ module LtiProvider
 
         link = "#{ENV['LTI_RUNNER_LINK'].sub(':resource_id', resource_id.to_s)}"
         if launch[:provider_params]['custom_oauth_access_token'].present?
-          link += "custom_oauth_access_token=#{launch[:provider_params]['custom_oauth_access_token']}&"
+          link += "oauth_access_token=#{launch[:provider_params]['custom_oauth_access_token']}&"
         else
           # get/create user, authorize user and send auth data
           # authToken=7ddadf7341cfa062d7de4f2127d452a8&userId=323304&
