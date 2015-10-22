@@ -59,13 +59,13 @@ module LtiProvider
       end
     end
 
-    def configure
-      respond_to do |format|
-        format.xml do
-          render xml: Launch.xml_config(lti_launch_url)
-        end
-      end
-    end
+    # def configure
+    #   respond_to do |format|
+    #     format.xml do
+    #       render xml: Launch.xml_config(lti_launch_url)
+    #     end
+    #   end
+    # end
 
     protected
       def show_error(message)
