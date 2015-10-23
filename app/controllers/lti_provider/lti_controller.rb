@@ -1,4 +1,5 @@
 require 'oauth/request_proxy/rack_request'
+require 'securerandom'
 
 module LtiProvider
   class LtiController < LtiProvider::ApplicationController
@@ -47,10 +48,31 @@ module LtiProvider
 
         link = "#{ENV['LTI_RUNNER_LINK'].sub(':resource_id', resource_id.to_s)}"
         if launch[:provider_params]['custom_oauth_access_token'].present?
+          access_token = launch[:provider_params]['custom_oauth_access_token']
+          token = Doorkeeper::AccessToken.by_token access_token if access_token
+        end
+        if token and token.accessible? and token.application.uid == launch[:provider_params]['oauth_consumer_key']
           link += "oauth_access_token=#{launch[:provider_params]['custom_oauth_access_token']}&"
         else
           # get/create user, authorize user and send auth data
-          # authToken=7ddadf7341cfa062d7de4f2127d452a8&userId=323304&
+          email = launch[:provider_params]['lis_person_contact_email_primary']
+          user = User.where(email: email.downcase).first
+          unless user
+            username = launch[:provider_params]['ext_user_username'].strip.downcase
+            app = Doorkeeper::Application.where(uid: launch[:provider_params]['oauth_consumer_key']).first
+            user = User.where(provider: app.name, username: username).first
+            unless user
+              # create user
+              user_params = new_user_params(app, username, launch[:provider_params])
+              model = User.user_model(user_params[:role])
+              user = model.create(user_params)
+              unless user.valid?
+                user.email = nil
+              end
+              user.save!
+            end
+          end
+          link += "authToken=#{user.api_key.access_token}&userId=#{user.id}&"
         end
         link += "lti_nonce=#{params[:nonce]}&launch_presentation_return_url=#{CGI.escape(launch_presentation_return_url)}"
         redirect_to link
@@ -75,6 +97,25 @@ module LtiProvider
     private
       def allow_iframe
         response.headers.except! 'X-Frame-Options'
+      end
+
+      def new_user_params(app, username, provider_params)
+        unless @user_params
+          @user_params = {provider: app.name, promo: app.name, username: username}
+          @user_params[:password_confirmation] = @user_params[:password] = SecureRandom.hex
+          if provider_params['lis_person_contact_email_primary'].present?
+            @user_params[:email] = provider_params['lis_person_contact_email_primary'].strip.downcase
+          end
+          @user_params[:state] = User::STATE_CONFIRMED
+          if provider_params['user_id'].present?
+            @user_params[:provider_user_id] = provider_params['user_id'].to_i
+          end
+          if provider_params['roles'].downcase.include? 'instructor'
+            @user_params[:role] = User::TEACHER_ROLE
+          end
+          @user_params[:role] ||= User::STUDENT_ROLE
+        end
+        @user_params
       end
 
   end
