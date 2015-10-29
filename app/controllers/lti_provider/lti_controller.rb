@@ -56,11 +56,13 @@ module LtiProvider
         else
           # get/create user, authorize user and send auth data
           email = launch[:provider_params]['lis_person_contact_email_primary']
-          user = User.where(email: email.downcase).first
+          user = User.where(email: email.downcase).first if email
           unless user
-            username = launch[:provider_params]['ext_user_username'].strip.downcase
             app = Doorkeeper::Application.where(uid: launch[:provider_params]['oauth_consumer_key']).first
-            user = User.where(provider: app.name, username: username).first
+            if launch[:provider_params]['ext_user_username'].present?
+              username = launch[:provider_params]['ext_user_username'].strip.downcase
+            end
+            user = User.where(provider: app.name, username: username).first if username
             unless user
               # create user
               user_params = new_user_params(app, username, launch[:provider_params])
@@ -101,14 +103,21 @@ module LtiProvider
 
       def new_user_params(app, username, provider_params)
         unless @user_params
-          @user_params = {provider: app.name, promo: app.name, username: username}
+          @user_params = {provider: app.name, promo: app.name}
+          @user_params[:username] = username if username.present?
           @user_params[:password_confirmation] = @user_params[:password] = SecureRandom.hex
           if provider_params['lis_person_contact_email_primary'].present?
             @user_params[:email] = provider_params['lis_person_contact_email_primary'].strip.downcase
           end
+          if provider_params['lis_person_name_given'].present?
+            @user_params[:first_name] = provider_params['lis_person_name_given'].strip
+          end
+          if provider_params['lis_person_name_family'].present?
+            @user_params[:last_name] = provider_params['lis_person_name_family'].strip
+          end
           @user_params[:state] = User::STATE_CONFIRMED
           if provider_params['user_id'].present?
-            @user_params[:provider_user_id] = provider_params['user_id'].to_i
+            @user_params[:provider_user_id] = provider_params['user_id']
           end
           if provider_params['roles'].downcase.include? 'instructor'
             @user_params[:role] = User::TEACHER_ROLE
