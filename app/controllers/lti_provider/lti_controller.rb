@@ -79,7 +79,7 @@ module LtiProvider
         end
         link += "lti_nonce=#{params[:nonce]}&launch_presentation_return_url=#{CGI.escape(launch_presentation_return_url)}"
         app ||= Doorkeeper::Application.where(uid: launch[:provider_params]['oauth_consumer_key']).first
-        OpenedModels::LtiLaunchEvent.capture_event(
+        LtiLaunchEvent.capture_event(
           user_id: user.id,
           resource_id: resource_id,
           partner_name: app.name,
