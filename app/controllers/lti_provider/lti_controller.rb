@@ -51,8 +51,9 @@ module LtiProvider
           access_token = launch[:provider_params]['custom_oauth_access_token']
           token = Doorkeeper::AccessToken.by_token access_token if access_token
         end
-        if token and token.accessible? and token.application.uid == launch[:provider_params]['oauth_consumer_key']
+        if token and token.resource_owner and token.accessible? and token.application.uid == launch[:provider_params]['oauth_consumer_key']
           link += "oauth_access_token=#{launch[:provider_params]['custom_oauth_access_token']}&"
+          user = token.resource_owner
         else
           # get/create user, authorize user and send auth data
           email = launch[:provider_params]['lis_person_contact_email_primary']
@@ -77,6 +78,15 @@ module LtiProvider
           link += "authToken=#{user.api_key.access_token}&userId=#{user.id}&"
         end
         link += "lti_nonce=#{params[:nonce]}&launch_presentation_return_url=#{CGI.escape(launch_presentation_return_url)}"
+        app ||= Doorkeeper::Application.where(uid: launch[:provider_params]['oauth_consumer_key']).first
+        OpenedModels::LtiLaunchEvent.capture_event(
+          user_id: user.id,
+          resource_id: resource_id,
+          partner_name: app.name,
+          lms_name: launch[:provider_params]['tool_consumer_info_product_family_code'],
+          lms_version: launch[:provider_params]['tool_consumer_info_version']
+        )
+
         redirect_to link
       else
         return show_error "The tool was not launched successfully. Please try again."
