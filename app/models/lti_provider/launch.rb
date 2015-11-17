@@ -14,6 +14,10 @@ module LtiProvider
       launch.validate_provider(provider, request)
 
       launch.provider_params = provider.to_params
+      if launch.provider_params['lis_outcome_service_url'].present?
+        #fix for some schoology.com requests
+        launch.provider_params['lis_outcome_service_url'].gsub!(/^:?\/\//, 'https://')
+      end
       launch.canvas_url      = launch.api_endpoint(provider)
       launch.nonce           = launch.provider_params['oauth_nonce']
 
